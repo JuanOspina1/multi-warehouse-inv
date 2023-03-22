@@ -18,23 +18,23 @@ import {
 } from "@mui/material";
 
 export const OverviewActiveWarehouses = (props) => {
-  const { products = [], sx } = props;
+  const { warehouses = [], sx } = props;
 
   return (
     <Card sx={sx}>
       <CardHeader title="Active Warehouses" />
       <List>
-        {products.map((product, index) => {
-          const hasDivider = index < products.length - 1;
-          const ago = formatDistanceToNow(product.updatedAt);
+        {warehouses.map((warehouse, index) => {
+          const hasDivider = index < warehouses.length - 1;
+          // const ago = formatDistanceToNow(warehouse.updatedAt);
 
           return (
-            <ListItem divider={hasDivider} key={product.id}>
-              <ListItemAvatar>
-                {product.image ? (
+            <ListItem divider={hasDivider} key={warehouse.id}>
+              {/* <ListItemAvatar>
+                {warehouse.image ? (
                   <Box
                     component="img"
-                    src={product.image}
+                    src={warehouse.image}
                     sx={{
                       borderRadius: 1,
                       height: 48,
@@ -51,18 +51,24 @@ export const OverviewActiveWarehouses = (props) => {
                     }}
                   />
                 )}
-              </ListItemAvatar>
+              </ListItemAvatar> */}
               <ListItemText
-                primary={product.name}
+                primary={warehouse.name}
                 primaryTypographyProps={{ variant: "subtitle1" }}
-                secondary={`Updated ${ago} ago`}
-                secondaryTypographyProps={{ variant: "body2" }}
+                // secondary={`Updated ${ago} ago`}
+                // secondaryTypographyProps={{ variant: "body2" }}
               />
-              <IconButton edge="end">
+              <ListItemText
+                primary={warehouse.phone}
+                primaryTypographyProps={{ variant: "subtitle1" }}
+                // secondary={`Updated ${ago} ago`}
+                // secondaryTypographyProps={{ variant: "body2" }}
+              />
+              {/* <IconButton edge="end">
                 <SvgIcon>
                   <EllipsisVerticalIcon />
                 </SvgIcon>
-              </IconButton>
+              </IconButton> */}
             </ListItem>
           );
         })}
@@ -87,6 +93,6 @@ export const OverviewActiveWarehouses = (props) => {
 };
 
 OverviewActiveWarehouses.propTypes = {
-  products: PropTypes.array,
+  warehouses: PropTypes.array,
   sx: PropTypes.object,
 };

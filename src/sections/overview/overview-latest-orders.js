@@ -55,7 +55,7 @@ export const OverviewLatestOrders = (props) => {
 
                 return (
                   <TableRow hover key={order.id}>
-                    <TableCell>{order.PO}</TableCell>
+                    <TableCell>{order.po}</TableCell>
                     <TableCell>{order.consignee}</TableCell>
                     <TableCell>{order.warehouse}</TableCell>
                     {/* <TableCell>
