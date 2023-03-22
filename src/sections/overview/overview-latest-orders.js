@@ -26,7 +26,15 @@ const statusMap = {
 
 export const OverviewLatestOrders = (props) => {
   const { orders = [], sx } = props;
+  console.log(orders);
 
+  // {
+  //   warehouse: doc.data().inputs.warehouse,
+  //   consignee: doc.data().inputs.consignee,
+  //   createdDate: doc.data().inputs.creationDate,
+  //   po: doc.data().inputs.PO,
+  //   id: doc.id,
+  // }
   return (
     <Card sx={sx}>
       <CardHeader title="Latest Orders" />
@@ -37,22 +45,23 @@ export const OverviewLatestOrders = (props) => {
               <TableRow>
                 <TableCell>PO</TableCell>
                 <TableCell>Consignee</TableCell>
+                <TableCell>Warehouse</TableCell>
                 <TableCell sortDirection="desc">Date</TableCell>
-                <TableCell>Status</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {orders.map((order) => {
-                const createdAt = format(order.createdAt, "dd/MM/yyyy");
+                const createdAt = format(order.createdDate, "MM/dd/yyyy");
 
                 return (
                   <TableRow hover key={order.id}>
-                    <TableCell>{order.ref}</TableCell>
-                    <TableCell>{order.customer.name}</TableCell>
-                    <TableCell>{createdAt}</TableCell>
-                    <TableCell>
+                    <TableCell>{order.PO}</TableCell>
+                    <TableCell>{order.consignee}</TableCell>
+                    <TableCell>{order.warehouse}</TableCell>
+                    {/* <TableCell>
                       <SeverityPill color={statusMap[order.status]}>{order.status}</SeverityPill>
-                    </TableCell>
+                    </TableCell> */}
+                    <TableCell>{createdAt}</TableCell>
                   </TableRow>
                 );
               })}
