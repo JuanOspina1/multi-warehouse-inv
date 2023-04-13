@@ -62,7 +62,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Overview | Devias Kit</title>
+        <title>Overview</title>
       </Head>
       <Box
         component="main"

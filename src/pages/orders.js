@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
@@ -10,10 +10,13 @@ import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import { CustomersTable } from "src/sections/customer/customers-table";
 import { CustomersSearch } from "src/sections/customer/customers-search";
 import { applyPagination } from "src/utils/apply-pagination";
+import { OrdersTable } from "src/sections/orders/orders-table";
+import { collection, onSnapshot, query } from "@firebase/firestore";
+import { db } from "src/firebase";
 
 const now = new Date();
 
-const data = [
+const data1 = [
   {
     id: "5e887ac47eed253091be10cb",
     address: {
@@ -158,7 +161,7 @@ const data = [
 
 const useCustomers = (page, rowsPerPage) => {
   return useMemo(() => {
-    return applyPagination(data, page, rowsPerPage);
+    return applyPagination(data1, page, rowsPerPage);
   }, [page, rowsPerPage]);
 };
 
@@ -168,12 +171,57 @@ const useCustomerIds = (customers) => {
   }, [customers]);
 };
 
+// ORDER FUNCTIONS
+
+const useOrders = (data, page, rowsPerPage) => {
+  return useMemo(() => {
+    return applyPagination(data, page, rowsPerPage);
+  }, [data, page, rowsPerPage]);
+};
+
+const useOrderIds = (orderList) => {
+  return useMemo(() => {
+    return orderList.map((thisOrder) => thisOrder.id);
+  }, [orderList]);
+};
+
 const Page = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const customers = useCustomers(page, rowsPerPage);
   const customersIds = useCustomerIds(customers);
   const customersSelection = useSelection(customersIds);
+
+  // ORDER SECTION FOR DATA
+
+  const [data, setData] = useState([]);
+  const orderList = useOrders(data, page, rowsPerPage);
+  const orderIDs = useOrderIds(orderList);
+  const orderSelection = useSelection(orderIDs);
+
+  const [poSearch, setPoSearch] = useState("");
+
+  useEffect(() => {
+    const qOrders = query(collection(db, "orders"));
+    const unsubscribe = onSnapshot(qOrders, (querySnapshot) => {
+      const orders = [];
+
+      querySnapshot.forEach((doc) => {
+        orders.push({
+          warehouse: doc.data().inputs.warehouse,
+          consignee: doc.data().inputs.consignee,
+          createdDate: doc.data().inputs.creationDate,
+          po: doc.data().inputs.PO,
+          id: doc.id,
+        });
+      });
+      setData(orders);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const handlePageChange = useCallback((event, value) => {
     setPage(value);
@@ -186,7 +234,7 @@ const Page = () => {
   return (
     <>
       <Head>
-        <title>Customers</title>
+        <title>Orders</title>
       </Head>
       <Box
         component="main"
@@ -199,7 +247,7 @@ const Page = () => {
           <Stack spacing={3}>
             <Stack direction="row" justifyContent="space-between" spacing={4}>
               <Stack spacing={1}>
-                <Typography variant="h4">Customers</Typography>
+                <Typography variant="h4">Orders</Typography>
                 <Stack alignItems="center" direction="row" spacing={1}>
                   <Button
                     color="inherit"
@@ -237,18 +285,18 @@ const Page = () => {
               </div>
             </Stack>
             <CustomersSearch />
-            <CustomersTable
+            <OrdersTable
               count={data.length}
-              items={customers}
-              onDeselectAll={customersSelection.handleDeselectAll}
-              onDeselectOne={customersSelection.handleDeselectOne}
+              items={orderList}
+              onDeselectAll={orderSelection.handleDeselectAll}
+              onDeselectOne={orderSelection.handleDeselectOne}
               onPageChange={handlePageChange}
               onRowsPerPageChange={handleRowsPerPageChange}
-              onSelectAll={customersSelection.handleSelectAll}
-              onSelectOne={customersSelection.handleSelectOne}
+              onSelectAll={orderSelection.handleSelectAll}
+              onSelectOne={orderSelection.handleSelectOne}
               page={page}
               rowsPerPage={rowsPerPage}
-              selected={customersSelection.selected}
+              selected={orderSelection.selected}
             />
           </Stack>
         </Container>
