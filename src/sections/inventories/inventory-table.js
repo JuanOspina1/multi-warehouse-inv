@@ -65,19 +65,23 @@ export const InventoryTable = (props) => {
             </TableHead>
             <TableBody>
               {items.map((order) => {
-                const isSelected = selected.includes(order.id);
+                const isSelected = selected.includes(order.lotNumber);
                 // const createdAt = format(order.createdDate, "MM/dd/yyyy");
 
                 return (
-                  <TableRow hover key={order.id} selected={isSelected}>
+                  <TableRow
+                    hover
+                    key={order.lotNumber} // eslint-disable-line
+                    selected={isSelected}
+                  >
                     <TableCell padding="checkbox">
                       <Checkbox
                         checked={isSelected}
                         onChange={(event) => {
                           if (event.target.checked) {
-                            onSelectOne?.(order.id);
+                            onSelectOne?.(order.lotNumber);
                           } else {
-                            onDeselectOne?.(order.id);
+                            onDeselectOne?.(order.lotNumber);
                           }
                         }}
                       />
