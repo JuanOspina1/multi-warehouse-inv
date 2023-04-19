@@ -1,29 +1,30 @@
-import { useCallback } from 'react';
-import { useRouter } from 'next/navigation';
-import PropTypes from 'prop-types';
-import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
-import { useAuth } from 'src/hooks/use-auth';
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
+import PropTypes from "prop-types";
+import { Box, Divider, MenuItem, MenuList, Popover, Typography } from "@mui/material";
+import { useAuth } from "src/hooks/use-auth";
+import { UserAuth } from "src/contexts/AuthContext";
 
 export const AccountPopover = (props) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
   const auth = useAuth();
+  const { user = [], logOut } = UserAuth();
 
-  const handleSignOut = useCallback(
-    () => {
-      onClose?.();
-      auth.signOut();
-      router.push('/auth/login');
-    },
-    [onClose, auth, router]
-  );
+  const handleSignOut = useCallback(() => {
+    onClose?.();
+    // auth.signOut();
+    logOut();
+
+    router.push("/auth/login");
+  }, [onClose, logOut, router]);
 
   return (
     <Popover
       anchorEl={anchorEl}
       anchorOrigin={{
-        horizontal: 'left',
-        vertical: 'bottom'
+        horizontal: "left",
+        vertical: "bottom",
       }}
       onClose={onClose}
       open={open}
@@ -32,16 +33,11 @@ export const AccountPopover = (props) => {
       <Box
         sx={{
           py: 1.5,
-          px: 2
+          px: 2,
         }}
       >
-        <Typography variant="overline">
-          Account
-        </Typography>
-        <Typography
-          color="text.secondary"
-          variant="body2"
-        >
+        <Typography variant="overline">Account</Typography>
+        <Typography color="text.secondary" variant="body2">
           Anika Visser
         </Typography>
       </Box>
@@ -50,15 +46,13 @@ export const AccountPopover = (props) => {
         disablePadding
         dense
         sx={{
-          p: '8px',
-          '& > *': {
-            borderRadius: 1
-          }
+          p: "8px",
+          "& > *": {
+            borderRadius: 1,
+          },
         }}
       >
-        <MenuItem onClick={handleSignOut}>
-          Sign out
-        </MenuItem>
+        <MenuItem onClick={handleSignOut}>Sign out</MenuItem>
       </MenuList>
     </Popover>
   );
@@ -67,5 +61,5 @@ export const AccountPopover = (props) => {
 AccountPopover.propTypes = {
   anchorEl: PropTypes.any,
   onClose: PropTypes.func,
-  open: PropTypes.bool.isRequired
+  open: PropTypes.bool.isRequired,
 };
