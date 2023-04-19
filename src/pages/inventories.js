@@ -96,10 +96,12 @@ const Page = () => {
     //   [event.target.name]: event.target.value,
     //   [event.target.id]: event.target.id,
     // }));
-    const selectedWarehouse = warehouseList.find((doc) => doc.id === event.target.id);
+    console.log(event.target.value);
+    const selectedWarehouse = warehouseList.find((doc) => doc.id === event.target.value);
+    console.log(selectedWarehouse);
     setCurrentWarehouse(selectedWarehouse);
   };
-
+  console.log(warehouseList);
   console.log(currentWarehouse);
 
   return (
