@@ -4,7 +4,19 @@ import { subDays, subHours } from "date-fns";
 import ArrowDownOnSquareIcon from "@heroicons/react/24/solid/ArrowDownOnSquareIcon";
 import ArrowUpOnSquareIcon from "@heroicons/react/24/solid/ArrowUpOnSquareIcon";
 import PlusIcon from "@heroicons/react/24/solid/PlusIcon";
-import { Box, Button, Container, Stack, SvgIcon, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Stack,
+  SvgIcon,
+  TextField,
+  Typography,
+  Card,
+  InputAdornment,
+  OutlinedInput,
+} from "@mui/material";
+import MagnifyingGlassIcon from "@heroicons/react/24/solid/MagnifyingGlassIcon";
 import { useSelection } from "src/hooks/use-selection";
 import { Layout as DashboardLayout } from "src/layouts/dashboard/layout";
 import { OrdersSearch } from "src/sections/orders/orders-search";
@@ -12,6 +24,7 @@ import { applyPagination } from "src/utils/apply-pagination";
 import { InventoryTable } from "src/sections/inventories/inventory-table";
 import { collection, onSnapshot, query } from "@firebase/firestore";
 import { db } from "src/firebase";
+import { InventorySearch } from "src/sections/inventories/inventory-search";
 
 const now = new Date();
 
@@ -22,6 +35,11 @@ const useOrders = (data, page, rowsPerPage) => {
     return applyPagination(data, page, rowsPerPage);
   }, [data, page, rowsPerPage]);
 };
+// const useOrders = (filteredData, page, rowsPerPage) => {
+//   return useMemo(() => {
+//     return applyPagination(filteredData, page, rowsPerPage);
+//   }, [filteredData, page, rowsPerPage]);
+// };
 
 const useOrderIds = (orderList) => {
   return useMemo(() => {
@@ -37,15 +55,21 @@ const Page = () => {
   const [currentWarehouse, setCurrentWarehouse] = useState(null);
   const [warehouseList, setWarehouseList] = useState([]);
 
+  // const [searchTerm, setSearchTerm] = useState("");
   // Data will be inventory items
   const [data, setData] = useState([]);
+  // const filteredData = data.filter((item) => {
+  //   return searchTerm.toLowerCase() === ""
+  //     ? item
+  //     : item.itemName.toLowerCase().includes(searchTerm);
+  // });
   const orderList = useOrders(data, page, rowsPerPage);
+  // const orderList = useOrders(data, page, rowsPerPage);
   const orderIDs = useOrderIds(orderList);
   const orderSelection = useSelection(orderIDs);
 
-  const [poSearch, setPoSearch] = useState("");
-
   useEffect(() => {
+    console.log("useEffect ran");
     const q = query(collection(db, "warehouses"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       let warehouses = [];
@@ -101,6 +125,10 @@ const Page = () => {
     console.log(selectedWarehouse);
     setCurrentWarehouse(selectedWarehouse);
   };
+
+  // const handleSearchTerm = (event) => {
+  //   setSearchTerm(event.target.value);
+  // };
   console.log(warehouseList);
   console.log(currentWarehouse);
 
@@ -151,8 +179,25 @@ const Page = () => {
                 </option>
               ))}
             </TextField>
-            <OrdersSearch />
+            <InventorySearch />
+            {/* <Card sx={{ p: 2 }}>
+              <OutlinedInput
+                defaultValue=""
+                fullWidth
+                placeholder="Search inventory"
+                onChange={handleSearchTerm}
+                startAdornment={
+                  <InputAdornment position="start">
+                    <SvgIcon color="action" fontSize="small">
+                      <MagnifyingGlassIcon />
+                    </SvgIcon>
+                  </InputAdornment>
+                }
+                sx={{ maxWidth: 500 }}
+              />
+            </Card> */}
             <InventoryTable
+              // count={data.length}
               count={data.length}
               items={orderList}
               onDeselectAll={orderSelection.handleDeselectAll}
