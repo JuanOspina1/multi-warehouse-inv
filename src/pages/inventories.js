@@ -35,15 +35,10 @@ const useOrders = (data, page, rowsPerPage) => {
     return applyPagination(data, page, rowsPerPage);
   }, [data, page, rowsPerPage]);
 };
-// const useOrders = (filteredData, page, rowsPerPage) => {
-//   return useMemo(() => {
-//     return applyPagination(filteredData, page, rowsPerPage);
-//   }, [filteredData, page, rowsPerPage]);
-// };
 
 const useOrderIds = (orderList) => {
   return useMemo(() => {
-    return orderList.map((thisOrder) => thisOrder.id);
+    return orderList?.map((thisOrder) => thisOrder.id);
   }, [orderList]);
 };
 
@@ -55,15 +50,13 @@ const Page = () => {
   const [currentWarehouse, setCurrentWarehouse] = useState(null);
   const [warehouseList, setWarehouseList] = useState([]);
 
-  // const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   // Data will be inventory items
   const [data, setData] = useState([]);
-  // const filteredData = data.filter((item) => {
-  //   return searchTerm.toLowerCase() === ""
-  //     ? item
-  //     : item.itemName.toLowerCase().includes(searchTerm);
-  // });
-  const orderList = useOrders(data, page, rowsPerPage);
+  const [filteredData, setFilteredData] = useState([]);
+
+  console.log(filteredData);
+  const orderList = useOrders(filteredData, page, rowsPerPage);
   // const orderList = useOrders(data, page, rowsPerPage);
   const orderIDs = useOrderIds(orderList);
   const orderSelection = useSelection(orderIDs);
@@ -93,6 +86,17 @@ const Page = () => {
       unsubscribe();
     };
   }, [currentWarehouse]);
+
+  useEffect(() => {
+    console.log(searchTerm);
+    const newData = data.filter((item) => {
+      return searchTerm.toLowerCase() === ""
+        ? item
+        : item.itemName.toLowerCase().includes(searchTerm);
+    });
+    setFilteredData(newData);
+    console.log(newData);
+  }, [searchTerm]);
 
   console.log(data);
 
@@ -126,10 +130,10 @@ const Page = () => {
     setCurrentWarehouse(selectedWarehouse);
   };
 
-  // const handleSearchTerm = (event) => {
-  //   setSearchTerm(event.target.value);
-  // };
-  console.log(warehouseList);
+  const handleSearchTerm = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  // console.log(warehouseList);
   console.log(currentWarehouse);
 
   return (
@@ -179,26 +183,11 @@ const Page = () => {
                 </option>
               ))}
             </TextField>
-            <InventorySearch />
-            {/* <Card sx={{ p: 2 }}>
-              <OutlinedInput
-                defaultValue=""
-                fullWidth
-                placeholder="Search inventory"
-                onChange={handleSearchTerm}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <SvgIcon color="action" fontSize="small">
-                      <MagnifyingGlassIcon />
-                    </SvgIcon>
-                  </InputAdornment>
-                }
-                sx={{ maxWidth: 500 }}
-              />
-            </Card> */}
+            <InventorySearch handleSearchTerm={handleSearchTerm} />
+
             <InventoryTable
               // count={data.length}
-              count={data.length}
+              count={filteredData.length}
               items={orderList}
               onDeselectAll={orderSelection.handleDeselectAll}
               onDeselectOne={orderSelection.handleDeselectOne}

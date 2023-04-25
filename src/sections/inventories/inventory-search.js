@@ -7,7 +7,7 @@ export const InventorySearch = ({ handleSearchTerm }) => (
       defaultValue=""
       fullWidth
       placeholder="Search inventory"
-      onChange={() => handleSearchTerm}
+      onChange={handleSearchTerm}
       startAdornment={
         <InputAdornment position="start">
           <SvgIcon color="action" fontSize="small">
